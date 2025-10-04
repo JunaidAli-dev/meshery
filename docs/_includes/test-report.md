@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: October 3rd 2025, 12:06:51 pm
+- Testing started at: October 4th 2025, 5:32:56 pm
 
 **📦 Test Result Summary**
 
-- ✅ 82 passed
+- ✅ 91 passed
 - ❌ 1 failed
-- ⚠️ 1 flaked
-- ⏩ 4 skipped
+- ⚠️ 3 flaked
+- ⏩ 1 skipped
 
-⌛ _Duration: 7 minutes and 47 seconds_
+⌛ _Duration: 8 minutes and 45 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,12 +21,11 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ❌ |
-| 2 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ➖ |
-| 3 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
-| 4 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
-| 5 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
-| 6 | chromium-local-provider | imports design via File |  | ⚠️ |
+| 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ⚠️ |
+| 2 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ❌ |
+| 3 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 4 | chromium-local-provider | Delete Kubernetes cluster connections |  | ⚠️ |
+| 5 | chromium-local-provider | deploys a published design to a connected cluster |  | ⚠️ |
 
 </div>
 </details>
