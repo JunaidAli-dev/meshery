@@ -68,7 +68,10 @@ const FinishDeploymentStep = ({ deploymentType, handleClose }) => {
         ) : (
           <>
             <ModelImportMessages message={deployEvent?.metadata?.ModelImportMessage} />
-            <ModelImportedSection modelDetails={deployEvent?.metadata?.ModelDetails} />
+            <ModelImportedSection
+              modelDetails={deployEvent?.metadata?.ModelDetails}
+              onClose={handleClose}
+            />
           </>
         )}
       </Box>

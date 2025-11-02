@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   CustomTooltip,
   styled,
@@ -11,10 +11,12 @@ import {
 } from '@sistent/sistent';
 import debounce from './debounce';
 
+
 const SearchContainer = styled('div')({
   display: 'flex',
   alignItems: 'center',
 });
+
 
 const SearchTextField = styled(TextField)(({ theme }) => ({
   '& .MuiOutlinedInput-root': {
@@ -50,6 +52,7 @@ const SearchTextField = styled(TextField)(({ theme }) => ({
   },
 }));
 
+
 const SearchBar = ({
   onSearch,
   placeholder,
@@ -60,34 +63,61 @@ const SearchBar = ({
 }) => {
   const [searchText, setSearchText] = useState(value);
   const searchRef = useRef(null);
+  const debouncedFunctionRef = useRef(null);
 
-  const debouncedOnSearch = debounce(onSearch, 500);
+  // Sync searchText when value prop changes (from URL or parent)
+  useEffect(() => {
+    if (value !== searchText) {
+      setSearchText(value);
+    }
+  }, [value]);
+
+  // Create debounced function
+  useEffect(() => {
+    debouncedFunctionRef.current = debounce((text) => {
+      if (onSearch) {
+        onSearch(text);
+      }
+    }, 500);
+  }, [onSearch]);
 
   const handleSearchChange = (event) => {
-    debouncedOnSearch(event.target.value);
-    setSearchText(event.target.value);
+    const newValue = event.target.value;
+    setSearchText(newValue);
+    if (debouncedFunctionRef.current) {
+      debouncedFunctionRef.current(newValue);
+    }
   };
 
   const handleClearIconClick = () => {
+    // Reset all state
     setModelsFilters({ page: 0 });
     setSearchText('');
-    debouncedOnSearch('');
     setExpanded(false);
+    
+    // Cancel any pending debounced calls
+    if (debouncedFunctionRef.current) {
+      debouncedFunctionRef.current.cancel?.();
+    }
+    
+    // Call onSearch with empty string
+    if (onSearch) {
+      onSearch('');
+    }
   };
 
   const handleSearchIconClick = () => {
     if (expanded) {
-      setSearchText('');
-      setExpanded(false);
+      handleClearIconClick();
     } else {
       setExpanded(true);
       setTimeout(() => {
-        searchRef.current.focus();
+        searchRef.current?.focus();
       }, 300);
     }
   };
 
-  const width = window.innerWidth;
+  const width = typeof window !== 'undefined' ? window.innerWidth : 1024;
   let searchWidth = '12.5rem';
   if (width <= 750) {
     searchWidth = '7.5rem';
@@ -114,11 +144,13 @@ const SearchBar = ({
           onClickAway={(event) => {
             const isTable = event.target.closest('#ref');
 
-            if (searchText !== '') {
-              return;
-            }
+            // Close search bar when clicking away
+            // Remove the searchText !== '' condition that was blocking the close
             if (isTable) {
-              handleClearIconClick(); // Close the search bar as needed
+              handleClearIconClick();
+            } else {
+              // Close without clearing if clicking elsewhere
+              setExpanded(false);
             }
           }}
         >

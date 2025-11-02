@@ -23,6 +23,7 @@ import MesheryTreeViewModel from './MesheryTreeViewModel';
 import MesheryTreeViewRegistrants from './MesheryTreeViewRegistrants';
 import ComponentTree from './ComponentTree';
 import RelationshipTree from './RelationshipTree';
+import { useRouter } from 'next/router';
 
 const MesheryTreeView = React.memo(
   ({
@@ -45,7 +46,7 @@ const MesheryTreeView = React.memo(
   }) => {
     const { handleUpdateSelectedRoute, selectedItemUUID: routerSelectedItemUUID } =
       useRegistryRouter();
-
+    const router = useRouter();
     const selectedItemUUID = externalSelectedItemUUID || routerSelectedItemUUID;
     const [expanded, setExpanded] = React.useState([]);
     const [selected, setSelected] = React.useState([]);
@@ -53,6 +54,17 @@ const MesheryTreeView = React.memo(
     const [isSearchExpanded, setIsSearchExpanded] = useState(searchText ? true : false);
     const [prevState, setPrevState] = useState({ data: [], uuid: '' });
     const scrollRef = useRef();
+
+    useEffect(() => {
+      // Listen for URL changes and update search text
+      if (router.isReady && router.query.searchText) {
+        const urlSearchText = decodeURIComponent(router.query.searchText);
+        if (searchText !== urlSearchText) {
+          setSearchText(urlSearchText);
+          setIsSearchExpanded(true);
+        }
+      }
+    }, [router.query.searchText, router.isReady]);
 
     const handleScroll = (scrollingView) => (event) => {
       const div = event.target;
@@ -280,14 +292,18 @@ const MesheryTreeView = React.memo(
 
     const setSearchExpand = (isExpand) => {
       if (!isExpand) {
-        setSearchText(() => null);
-        setResourcesDetail(() => []);
+        setSearchText(null);
+        setResourcesDetail([]);
         setPage({
           Models: 0,
           Components: 0,
           Relationships: 0,
           Registrants: 0,
         });
+        if (!isModalMode && router.pathname.includes('settings')) {
+          const newUrl = `${router.pathname}?settingsCategory=Registry&tab=${view}`;
+          router.replace(newUrl, undefined, { shallow: true });
+        }
       }
       setIsSearchExpanded(isExpand);
     };

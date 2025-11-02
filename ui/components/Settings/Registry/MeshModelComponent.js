@@ -349,6 +349,13 @@ const MeshModelComponent_ = ({
     }
   }, [externalSearchText]);
 
+  useEffect(() => {
+    if (router.isReady && router.query.searchText && !searchText && !externalSearchText) {
+      const urlSearchText = decodeURIComponent(router.query.searchText);
+      setSearchText(urlSearchText);
+    }
+  }, [router.isReady, router.query.searchText, searchText, externalSearchText]);
+
   return (
     <div data-test="workloads">
       <ImportModelModal

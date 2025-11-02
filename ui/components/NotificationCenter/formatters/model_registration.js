@@ -170,7 +170,7 @@ const RelationshipDetail = ({ relationship }) => {
   return <Box>{Selectors && Selectors.length > 0 && renderSelectors(Selectors)}</Box>;
 };
 
-export const ModelImportedSection = ({ modelDetails }) => {
+export const ModelImportedSection = ({ modelDetails, onClose }) => {
   if (typeof modelDetails !== 'object' || Array.isArray(modelDetails)) {
     return null;
   }
@@ -205,8 +205,10 @@ export const ModelImportedSection = ({ modelDetails }) => {
               </Typography>
               {!isEntityFile && (
                 <TitleLink
-                  href={`settings?settingsCategory=Registry&tab=Models&searchText=${modelName}`}
-                  target="_self"
+                  href={`/settings?settingsCategory=Registry&tab=Models&searchText=${modelName}`}
+                  onClick={() => {
+                    onClose();
+                  }}
                 >
                   Registry
                 </TitleLink>
